@@ -2,7 +2,7 @@ import os
 from typing import Iterator
 import torch
 from torch import nn
-from hearth.grad import freeze, unfreeze, trainable_parameters
+from hearth.grad import freeze, unfreeze, trainable_parameters, allgrad
 from hearth._config import _init_wrapper, from_config
 from hearth._file_utils import save_json, load_json
 
@@ -88,3 +88,45 @@ class BaseModule(nn.Module):
         """
         torch.save(self.state_dict(), os.path.join(model_dir, 'state.pt'))
         save_json(self.config(), path=os.path.join(model_dir, 'config.json'))
+
+    def blocks(self) -> Iterator[nn.Module]:
+        """this override this method to define depth based sections of your network.
+
+        Defining :meth:`blocks` is useful when your'e doing finetuning or want to use depth
+        based learning rates. It's how methods like :meth:`bottleneck` and :meth:`unbottle` know
+        how to iterate over your model. When overriden this method should yield logical depth based
+        sections of your model, which should themselves be :class:`nn.Module`s **in depth based
+        order from input to output**. How you section your network or group things together is up to
+        you. If not overridden this method will just yield `self`
+        """
+        yield self
+
+    def reverse_blocks(self) -> Iterator[nn.Module]:
+        """yields blocks from this modules :meth:`blocks` method in reverse order (from output to\
+         input.)
+        """
+        yield from list(self.blocks())[::-1]
+
+    def depth(self) -> int:
+        """the block depth of this module (as defined in :meth:`blocks`)."""
+        return len(list(self.blocks()))
+
+    def bottleneck(self, n: int):
+        depth = self.depth()
+        if n > depth:
+            raise ValueError(f'cannot bottleneck {n} blocks where depth is only {depth}')
+        for i, block in enumerate(self.blocks()):
+            if i < n:
+                freeze(block)
+
+    def unbottle(self):
+        """unfreeze (inplace) a the next deepest block that is wholly or partially frozen.
+
+        Returns:
+            Union[None, nn.Module]: returns the unfrozen block if there was anything to unbottle
+                otherwise None
+        """
+        for block in self.reverse_blocks():
+            if not allgrad(block):
+                return unfreeze(block)
+        return None
