@@ -34,4 +34,4 @@ def test_grad():
     yhat, target = torch.rand(5, 1, requires_grad=True), torch.randint(1, size=(5, 1)) * 1.0
     running_loss = Running(nn.BCELoss())
     out = running_loss(yhat, target)
-    assert out.grad_fn.name() == 'BinaryCrossEntropyBackward'
+    assert out.grad_fn.name().startswith('BinaryCrossEntropyBackward')

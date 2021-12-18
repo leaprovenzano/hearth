@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.7, 3.8]
-        
+        python-version: [3.7.12, 3.8.12, 3.9.9]
+
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -24,7 +24,7 @@ jobs:
         pip install wheel
         pip install -r requirements/test.txt
         pip install -r requirements/dev.txt
-        pip install torch==1.7.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
+        pip install torch==1.10.1+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
         pip install .
     - name: Flake8 linting
       run: |
@@ -37,4 +37,4 @@ jobs:
         pytest --cov-report=xml
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
-        
+
