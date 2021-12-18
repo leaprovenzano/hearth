@@ -7,6 +7,8 @@ from torch import nn
 import functools
 import importlib
 
+_global_param_exclude = ('device', 'dtype')
+
 
 class SupportsConfig(ABC):
     """protocoll for classes that support a set of methods for load and save from json config."""
@@ -115,7 +117,11 @@ def is_extended_config(config) -> bool:
 def gather_params_from_instance(inst, params=None, exclude=()):
     if params is None:
         params = inspect.signature(inst.__class__).parameters
-    return {param: getattr(inst, param) for param in params if param not in exclude}
+    return {
+        param: getattr(inst, param)
+        for param in params
+        if param not in _global_param_exclude + exclude
+    }
 
 
 def extended_config(obj):

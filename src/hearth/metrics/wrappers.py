@@ -21,7 +21,7 @@ class Running:
         >>> predictions = torch.rand(10, 1, requires_grad=True)
         >>> targets = (torch.rand(10, 1) > .5) *1.0
         >>> running_loss(predictions, targets) # this should have grad!
-        tensor(0.5636, grad_fn=<BinaryCrossEntropyBackward>)
+        tensor(0.5636, grad_fn=<BinaryCrossEntropyBackward0>)
 
         >>> running_loss.average
         0.5636
@@ -31,7 +31,7 @@ class Running:
         >>> predictions = torch.rand(6, 1, requires_grad=True)
         >>> targets = (torch.rand(6, 1) > .5) *1.0
         >>> running_loss(predictions, targets)
-        tensor(1.0943, grad_fn=<BinaryCrossEntropyBackward>)
+        tensor(1.0943, grad_fn=<BinaryCrossEntropyBackward0>)
 
         >>> running_loss.average
         0.7625999748706818
