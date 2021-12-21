@@ -5,6 +5,7 @@ from .monitors import ImprovementMonitor
 from .checkpoints import Checkpoint
 from .stopping import EarlyStopping
 from .history import History
+from .finetuner import FineTuneCallback
 from .learning_rate import (
     LambdaLRCallback,
     MultiStepLRCallback,
@@ -24,6 +25,7 @@ __all__ = [
     'ImprovementMonitor',
     'Checkpoint',
     'EarlyStopping',
+    'FineTuneCallback',
     'History',
     'LambdaLRCallback',
     'MultiStepLRCallback',
