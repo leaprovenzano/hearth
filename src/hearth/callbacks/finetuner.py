@@ -43,10 +43,12 @@ class FineTuneCallback(Callback):
     def on_registration(self, loop):
         # check model and optimizer type
         if not isinstance(loop.model, BaseModule):
-            raise TypeError(f'{self.__class__.__name__} callback only supports hearth.BaseModule')
+            raise TypeError(
+                f'{self.__class__.__name__} only supports hearth.BaseModule subclasses.'
+            )
         if not isinstance(loop.optimizer, LazyOptimizer):
             raise TypeError(
-                f'{self.__class__.__name__} callback only supports hearth.LazyOptimizer subclasses'
+                f'{self.__class__.__name__} only supports hearth.LazyOptimizer subclasses.'
             )
 
     def _should_unbottle(self, epoch: int) -> bool:
