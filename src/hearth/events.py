@@ -126,8 +126,6 @@ class UnbottlingComplete(Event):
         epoch: the epoch that stopping is triggered.
     """
 
-    epoch: int
-
     @property
     def msg(self):
-        return f' Unbottling complete on epoch {self.epoch}.'
+        return ' Unbottling complete nothing left to unbottle.'

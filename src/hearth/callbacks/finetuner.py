@@ -69,7 +69,7 @@ class FineTuneCallback(Callback):
         # so unbottling is complete
         if not next_block:
             self._unbottling_complete = True
-            return UnbottlingComplete(loop.epoch)
+            return UnbottlingComplete()
         # otherwise unbottle
         self._depth += 1
         lr = self._get_lr(loop.optimizer)
