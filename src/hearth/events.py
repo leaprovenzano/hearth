@@ -99,3 +99,33 @@ class EarlyStop(Event):
     @property
     def msg(self):
         return f' triggered at epoch {self.epoch}.'
+
+
+@dataclass
+class UnbottleEvent(Event):
+    """this event should be emitted when fintuning.
+
+    Args:
+        epoch: the epoch that stopping is triggered.
+    """
+
+    epoch: int
+    block: str
+    lr: float
+
+    @property
+    def msg(self):
+        return f' Unbottled block {self.block} with learning rate {self.lr} on epoch {self.epoch}.'
+
+
+@dataclass
+class UnbottlingComplete(Event):
+    """this event should be emitted when unbottling is complete during finetuning.
+
+    Args:
+        epoch: the epoch that stopping is triggered.
+    """
+
+    @property
+    def msg(self):
+        return ' Unbottling complete nothing left to unbottle.'
