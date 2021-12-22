@@ -11,6 +11,7 @@ from hearth.optimizers import LazyOptimizer
 from hearth.modules import BaseModule
 from hearth.callbacks import FineTuneCallback
 from hearth.optimizers import AdamW
+from hearth.events import UnbottleEvent, UnbottlingComplete
 
 
 @dataclass
@@ -40,7 +41,7 @@ class DummyLoop:
 
     def do_epoch(self):
         self.on_epoch_start()
-        self.epochs += 1
+        self.epoch += 1
 
     def run(self, epochs):
         for _ in range(epochs):
@@ -110,3 +111,20 @@ def test_should_unbottle(callback, epochs):
 def test_should_not_unbottle(callback, epochs):
     for epoch in epochs:
         assert not callback._should_unbottle(epoch)
+
+
+def test_events_emitted():
+    base_lr = 1.0
+    callback = FineTuneCallback(start_epoch=3, unbottle_every=2)
+    model = HearthModel()
+    model.bottleneck(3)
+    loop = DummyLoop(model=model, optimizer=AdamW(lr=1.0), callback=callback)
+    expected_events = [
+        UnbottleEvent(epoch=3, block='Linear', lr=base_lr / callback.decay),
+        UnbottleEvent(epoch=5, block='Linear', lr=base_lr / (callback.decay ** 2)),
+        UnbottleEvent(epoch=7, block='Linear', lr=base_lr / (callback.decay ** 3)),
+        UnbottlingComplete(),
+    ]
+
+    loop.run(11)
+    assert loop._event_log == expected_events
