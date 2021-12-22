@@ -53,7 +53,9 @@ class FineTuneCallback(Callback):
 
     def _should_unbottle(self, epoch: int) -> bool:
         if not self._unbottling_complete:
-            return epoch >= self.start_epoch and epoch % self.unbottle_every == 0
+            return (
+                epoch >= self.start_epoch and (self.start_epoch + epoch) % self.unbottle_every == 0
+            )
         return False
 
     def _get_lr(self, optimizer):
