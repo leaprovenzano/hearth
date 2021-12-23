@@ -30,6 +30,7 @@
    ops
    transforms
    utils
+   datasets
 
 
 .. toctree::
