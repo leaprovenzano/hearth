@@ -1,11 +1,16 @@
 import os
 import re
-from typing import Literal
+import sys
 
 import matplotlib.pyplot as plt
 
 
 from torchvision.io import read_image as _read_img, ImageReadMode
+
+if sys.version_info < (3, 8):
+    from typing_extensions import Literal
+else:
+    from typing import Literal
 
 
 ReadModeT = Literal['UNCHANGED', 'GRAY', 'GRAY_ALPHA', 'RGB', 'RGB_ALPHA']
