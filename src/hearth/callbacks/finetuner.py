@@ -19,6 +19,8 @@ class FineTuneCallback(Callback):
         start_epoch: start unbottling blocks at this epoch.
         unbottle_every: number of epochs to wait between unbottles.
         decay: lr for each block will be base_lr/ (decay^depth). Defaults to 2.6 (as in ULMfit).
+        max_depth: maximum depth (in blocks) to unbottle. If -1 then keep unbottling until
+            all blocks are trainable. Defaults to -1.
 
     **Active On:**
         - registration
@@ -35,6 +37,7 @@ class FineTuneCallback(Callback):
     start_epoch: int
     unbottle_every: int = 1
     decay: float = 2.6
+    max_depth: int = -1
 
     def __post_init__(self):
         self._unbottling_complete: bool = False
@@ -80,3 +83,7 @@ class FineTuneCallback(Callback):
         if self._should_unbottle(loop.epoch):
             event = self._unbottle(loop)
             loop.fire(event)
+            if (self.max_depth > -1) and (self._depth >= self.max_depth):
+                self._unbottling_complete = True
+                if not isinstance(event, UnbottlingComplete):
+                    loop.fire(UnbottlingComplete())
