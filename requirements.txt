@@ -3,3 +3,4 @@ numpy
 more_itertools
 collectionish>=0.5.0
 torchvision
+matplotlib

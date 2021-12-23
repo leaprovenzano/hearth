@@ -2,6 +2,9 @@ import os
 import re
 from typing import Literal
 
+import matplotlib.pyplot as plt
+
+
 from torchvision.io import read_image as _read_img, ImageReadMode
 
 
@@ -47,3 +50,8 @@ def read_image(path: str, mode: ReadModeT = 'RGB'):
             to 'RGB'.
     """
     return _read_img(os.path.expanduser(path), getattr(ImageReadMode, mode.upper()))
+
+
+def show_img(img):
+    """plot a single image."""
+    return plt.imshow(img.transpose(0, -1))
