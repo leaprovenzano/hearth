@@ -1,7 +1,11 @@
 from typing import Sequence
+
 import torch
 from torch import Tensor
+import torchvision.transforms as T  # noqa: N812
+
 from hearth.modules import BaseModule
+from hearth.vision.ops import square_center_crop
 
 
 class NormalizeImg(BaseModule):
@@ -48,3 +52,30 @@ class NormalizeImg(BaseModule):
 
     def forward(self, x: Tensor) -> Tensor:
         return (x - self.mean) / self.std
+
+
+class ResizeCrop(BaseModule):
+    """resize a single image by scaling smallest dimension and center cropping with optional shift.
+
+    Args:
+        size: new size for square image.
+        noise: for shifting the crop window along the longest dimension Defaults to 0.0 (no noise).
+
+    Example:
+        >>> import torch
+        >>> from hearth.vision.transforms import ResizeCrop
+        >>>
+        >>> resize = ResizeCrop(224, crop_noise=0.5)
+        >>> img = torch.randint(0, 255, size=(3, 1024, 986))
+        >>> resize(img).shape
+        torch.Size([3, 224, 224])
+    """
+
+    def __init__(self, size: int, crop_noise: float = 0.0):
+        super().__init__()
+        self.size = size
+        self.crop_noise = crop_noise
+        self.resize = T.Resize(self.size)
+
+    def forward(self, img: torch.Tensor) -> torch.Tensor:
+        return square_center_crop(self.resize(img), noise=self.crop_noise)
