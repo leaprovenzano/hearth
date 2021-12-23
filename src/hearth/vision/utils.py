@@ -39,7 +39,7 @@ def is_valid_filename(path: str) -> bool:
 
 
 def read_image(path: str, mode: ReadModeT = 'RGB'):
-    """read an image (with proper handling for user dir) in given model
+    """read an image (with proper handling for user dir) in given mode.
 
     Args:
         path: path to image file
