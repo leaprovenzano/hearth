@@ -128,3 +128,19 @@ def test_events_emitted():
 
     loop.run(11)
     assert loop._event_log == expected_events
+
+
+def test_events_emitted_with_max_depth():
+    base_lr = 1.0
+    callback = FineTuneCallback(start_epoch=3, unbottle_every=2, max_depth=2)
+    model = HearthModel()
+    model.bottleneck(3)
+    loop = DummyLoop(model=model, optimizer=AdamW(lr=1.0), callback=callback)
+    expected_events = [
+        UnbottleEvent(epoch=3, block='Linear', lr=base_lr / callback.decay),
+        UnbottleEvent(epoch=5, block='Linear', lr=base_lr / (callback.decay ** 2)),
+        UnbottlingComplete(),
+    ]
+
+    loop.run(11)
+    assert loop._event_log == expected_events
