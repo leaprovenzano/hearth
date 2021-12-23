@@ -28,6 +28,7 @@
    :toctree: _autosummary_vision
 
    ops
+   transforms
 
 
 .. toctree::
