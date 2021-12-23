@@ -1,4 +1,5 @@
 from typing import Sequence
+import random
 
 import torch
 from torch import Tensor
@@ -79,3 +80,29 @@ class ResizeCrop(BaseModule):
 
     def forward(self, img: torch.Tensor) -> torch.Tensor:
         return square_center_crop(self.resize(img), noise=self.crop_noise)
+
+
+class RandomFlipOrient(BaseModule):
+    """randomly flip orientation of a single image
+
+    Args:
+        p: probability of flipping orientaion. Defaults to 0.5.
+
+    Example:
+        >>> from hearth.vision.transforms import RandomFlipOrient
+        >>>
+        >>> # set p=1.0 to ensure stuff happens
+        >>> transform = RandomFlipOrient(p=1.0)
+        >>> img = torch.randint(0, 255, size=(3, 128, 256))
+        >>> transform(img).shape
+        torch.Size([3, 256, 128])
+    """
+
+    def __init__(self, p: float = 0.5):
+        super().__init__()
+        self.p = p
+
+    def forward(self, img: torch.Tensor) -> torch.Tensor:
+        if random.random() <= self.p:
+            return img.swapaxes(-2, -1).contiguous()
+        return img
