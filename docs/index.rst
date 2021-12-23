@@ -21,6 +21,14 @@
    datasets
    optimizers
 
+.. currentmodule:: hearth.vision
+
+.. autosummary::
+   :caption: vision:
+   :toctree: _autosummary_vision
+
+   ops
+
 
 .. toctree::
    :maxdepth: 2
