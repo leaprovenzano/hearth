@@ -12,14 +12,22 @@
    metrics
    losses
    loop
-   transforms
-   samplers
    grad
    callbacks
    events
    containers
-   datasets
    optimizers
+
+.. currentmodule:: hearth.data
+
+.. autosummary::
+   :caption: vision:
+   :toctree: _autosummary_data
+
+   samplers
+   datasets
+   transforms
+
 
 .. currentmodule:: hearth.vision
 

@@ -1,4 +1,4 @@
-from hearth.transforms import Tensorize
+from hearth.data.transforms import Tensorize
 import torch
 import numpy as np
 import pytest

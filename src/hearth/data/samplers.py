@@ -31,7 +31,7 @@ class SubsequenceSampler(Sampler):
     Example:
 
         >>> import torch
-        >>> from hearth.samplers import SubsequenceSampler
+        >>> from hearth.data.samplers import SubsequenceSampler
         >>> _ = torch.manual_seed(0)
         >>>
         >>> # subsequence sampler only dataset
@@ -163,7 +163,7 @@ class BatchSubsequenceSampler(torch.utils.data.Sampler):
 
     Example:
         >>> import torch
-        >>> from hearth.samplers import SubsequenceSampler
+        >>> from hearth.data.samplers import SubsequenceSampler
         >>> _ = torch.manual_seed(0)
         >>> sampler = BatchSubsequenceSampler(range(113), batch_size=4, sequence_length=5)
         >>> len(sampler)

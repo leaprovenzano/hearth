@@ -11,7 +11,7 @@ from hearth.modules import BaseModule
 
 from hearth.losses import MultiHeadLoss
 from hearth.containers import TensorDict
-from hearth.datasets import XYDataset, TensorDataset
+from hearth.data.datasets import XYDataset, TensorDataset
 from hearth.optimizers import AdamW
 
 
