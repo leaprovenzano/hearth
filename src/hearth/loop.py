@@ -24,15 +24,18 @@ class Loop:
     def __init__(
         self,
         model: nn.Module,
-        optimizer: torch.optim.Optimizer,
+        optimizer: LazyOptimizer,
         loss_fn: Callable,
         metrics: Optional[Union[Callable, MetricStack, Sequence[Callable]]] = None,
         callbacks: Sequence[Callback] = (),
         history: Optional[History] = None,
+        device: Union[torch.device, str] = 'cpu',
     ):
         self.model = model
-        self.optimizer = optimizer
         self.loss_fn = loss_fn
+        self.to(device)
+        self.optimizer = optimizer
+
         self.metrics = metrics
         self.n_batches = 0
         self.batches_seen = 0
@@ -52,6 +55,11 @@ class Loop:
         if isinstance(optimizer, LazyOptimizer) and not optimizer.initialized:
             optimizer.add_model(self.model)
         self._optimizer = optimizer
+
+    def to(self, device: Union[torch.device, str]):
+        self.device = device
+        self.model.to(self.device)
+        self._loss_fn.to(self.device)
 
     @property
     def metrics(self):
@@ -151,6 +159,8 @@ class Loop:
         self.optimizer.zero_grad()
         # unpack the batch... you can override this if your batch differs...
         x, y = batch
+        x = x.to(self.device)
+        y = y.to(self.device)
 
         y_hat = self._forward(x)
         loss = self._compute_loss(y_hat, y)

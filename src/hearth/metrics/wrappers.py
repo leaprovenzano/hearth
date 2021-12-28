@@ -1,5 +1,5 @@
 import torch
-from typing import Callable, Mapping
+from typing import Callable, Mapping, Union
 
 
 class Running:
@@ -80,3 +80,8 @@ class Running:
 
     def __repr__(self):
         return f'{self.__class__.__name__}({self.fn!r})'
+
+    def to(self, device: Union[torch.device, str]):
+        if hasattr(self.fn, 'to'):
+            return self.fn.to(device)  # type: ignore
+        return self
