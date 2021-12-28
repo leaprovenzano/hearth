@@ -1,6 +1,6 @@
 import torch
 from torch.utils.data import TensorDataset, DataLoader
-from hearth.samplers import BatchSubsequenceSampler
+from hearth.data.samplers import BatchSubsequenceSampler
 
 
 def test_with_built_dataloader():

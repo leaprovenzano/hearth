@@ -1,4 +1,4 @@
-from hearth.samplers import SubsequenceSampler
+from hearth.data.samplers import SubsequenceSampler
 from itertools import chain
 import pytest
 

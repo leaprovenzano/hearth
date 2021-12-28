@@ -34,7 +34,7 @@ class Tensorize(Transform[InT, torch.Tensor]):
 
     Example:
         >>> import torch
-        >>> from hearth.transforms import Tensorize
+        >>> from hearth.data.transforms import Tensorize
         >>>
         >>> transform = Tensorize(dtype='float32')
         >>> transform([1.1, 2.2, 3.3])
@@ -82,7 +82,7 @@ class Normalize(Transform):
 
     Example:
         >>> import torch
-        >>> from hearth.transforms import Normalize
+        >>> from hearth.data.transforms import Normalize
         >>>
         >>> transform = Normalize(mean=1.5, std=1.1859)
         >>> x = torch.linspace(0, 3, 5)
@@ -120,7 +120,7 @@ class Pipeline(Transform):
     Example:
         >>> import torch
         >>> import numpy as np
-        >>> from hearth.transforms import Normalize, Tensorize, Pipeline
+        >>> from hearth.data.transforms import Normalize, Tensorize, Pipeline
         >>>
         >>> pipeline = Pipeline(Tensorize(dtype='float32'), Normalize(mean=-0.34, std=1.75))
         >>> pipeline

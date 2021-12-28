@@ -8,7 +8,7 @@ from torch.utils.data import Dataset
 
 import torchvision.transforms as T  # noqa: N812
 
-from hearth.datasets import BatchesMixin
+from hearth.data.datasets import BatchesMixin
 
 from hearth.vision.utils import is_valid_filename, _image_file_end_expr, show_img, read_image
 from hearth.vision.transforms import ResizeCrop
