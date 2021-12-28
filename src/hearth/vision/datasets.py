@@ -4,16 +4,18 @@ from typing import Union, Callable, Optional, Sequence, Tuple, List
 
 import torch
 from torch import Tensor
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 
 import torchvision.transforms as T  # noqa: N812
+
+from hearth.datasets import BatchesMixin
 
 from hearth.vision.utils import is_valid_filename, _image_file_end_expr, show_img, read_image
 from hearth.vision.transforms import ResizeCrop
 
 
 @dataclass
-class RGBImageDataset(Dataset):
+class RGBImageDataset(Dataset, BatchesMixin):
     """simple RGB image dataset that loads images from a directory. supports augmentations and \
     various utility methods as well as batch indexing (from list or slice).
 
@@ -105,31 +107,3 @@ class RGBImageDataset(Dataset):
 
     def __len__(self) -> int:
         return len(self._files)
-
-    def batches(
-        self,
-        batch_size: int = 32,
-        shuffle: bool = False,
-        drop_last: bool = False,
-        num_workers: int = 0,
-        **kwargs,
-    ) -> DataLoader:
-        """return a Dataloader that iterates over batches of this dataset.
-
-        Note:
-            this method supports additional keyword args which will be passed to the dataloader.
-
-        Args:
-            batch_size: Defaults to 32.
-            shuffle: if True shuffle the dataset. Defaults to False.
-            drop_last: if true drop the last batch if it is less than batch size. Defaults to False.
-            num_workers: number of workers. Defaults to 0.
-        """
-        return DataLoader(
-            self,
-            batch_size=batch_size,
-            num_workers=num_workers,
-            drop_last=drop_last,
-            shuffle=shuffle,
-            **kwargs,
-        )

@@ -4,7 +4,6 @@ import numpy as np
 import torch
 
 from torch import nn
-from torch.utils.data import DataLoader
 from hearth.metrics import BinaryAccuracy
 from hearth.loop import Loop
 
@@ -12,7 +11,7 @@ from hearth.modules import BaseModule
 
 from hearth.losses import MultiHeadLoss
 from hearth.containers import TensorDict
-from hearth.datasets import XYDataset
+from hearth.datasets import XYDataset, TensorDataset
 from hearth.optimizers import AdamW
 
 
@@ -23,18 +22,18 @@ class TwoHeadedModel(BaseModule):
         self.binary_head = nn.Linear(in_features, 1)
 
     def forward(self, x: torch.Tensor) -> Dict[str, torch.Tensor]:
-        return {'a': self.class_head(x), 'b': self.binary_head(x)}
+        return dict(a=self.class_head(x), b=self.binary_head(x))
 
 
 def gen_xor_dataset(n: int, val_split: float = 0.2):
     x = torch.rand(n, 2)
-    y = np.logical_xor(x[:, 0] >= 0.5, x[:, 1] >= 0.5).unsqueeze(-1) * 1.0
+    y = np.logical_xor(x[:, 0] >= 0.5, x[:, 1] >= 0.5).unsqueeze(-1) * 1.0  # type: ignore
     x = x * 2 - 1
 
     n_train = n - int(round(n * val_split))
 
-    train = torch.utils.data.TensorDataset(x[:n_train], y[:n_train])
-    val = torch.utils.data.TensorDataset(x[n_train:], y[n_train:])
+    train = TensorDataset(x[:n_train], y[:n_train])
+    val = TensorDataset(x[n_train:], y[n_train:])
 
     return train, val
 
@@ -42,8 +41,8 @@ def gen_xor_dataset(n: int, val_split: float = 0.2):
 def test_full_loop_on_simple_xor():
     train, val = gen_xor_dataset(10000)
 
-    train_batches = DataLoader(train, batch_size=32, shuffle=True, drop_last=False)
-    val_batches = DataLoader(val, batch_size=32, shuffle=True, drop_last=False)
+    train_batches = train.batches(shuffle=True, drop_last=False)
+    val_batches = val.batches(batch_size=32, shuffle=True, drop_last=False)
 
     model = nn.Sequential(
         nn.Linear(2, 32), nn.ReLU(), nn.Linear(32, 32), nn.ReLU(), nn.Linear(32, 1), nn.Sigmoid()
@@ -69,8 +68,8 @@ def test_multioutput(mocker):
 
     val = XYDataset(inputs[-2:], targets[-2:])
 
-    train_batches = DataLoader(train, batch_size=8, shuffle=True, drop_last=False)
-    val_batches = DataLoader(val, batch_size=8, shuffle=True, drop_last=False)
+    train_batches = train.batches(batch_size=8, shuffle=True, drop_last=False)
+    val_batches = val.batches(batch_size=8, shuffle=True, drop_last=False)
 
     model = TwoHeadedModel()
 
@@ -84,6 +83,7 @@ def test_multioutput(mocker):
     assert loop._loss_agg_key == 'weighted_sum'
 
     x, y = next(iter(train_batches))
+    print(y)
     yhat = model(x)
     expected_loss = loop.loss_fn(yhat, y)
     loop.loss_fn.reset()
