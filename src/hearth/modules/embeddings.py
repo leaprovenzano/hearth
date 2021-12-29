@@ -33,7 +33,7 @@ class AbsolutePositionalEmbedding(BaseModule):
         self.padding_idx = padding_idx
         self.embedding = nn.Embedding(self.max_len + 1, features, padding_idx=self.padding_idx)
         self.register_buffer(
-            "position_ids", torch.arange(1, self.max_len + 1).expand((1, -1)), persistent=False
+            'position_ids', torch.arange(1, self.max_len + 1).expand((1, -1)), persistent=False
         )
 
     def forward(self, tokens: torch.Tensor) -> torch.Tensor:
