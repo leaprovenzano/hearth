@@ -3,6 +3,7 @@ from .base import BaseModule
 from .wrappers import Residual, ReZero, TimeMasked
 from .normalization import LayerNormSimple, MaskedLayerNorm
 from .embeddings import AbsolutePositionalEmbedding
+from .transformer import Boom, TransformerEncoder, TransformerEncoderBlock
 
 __all__ = [
     'BaseModule',
@@ -13,4 +14,7 @@ __all__ = [
     'AbsolutePositionalEmbedding',
     'TimeMasked',
     'SelfAttention',
+    'Boom',
+    'TransformerEncoder',
+    'TransformerEncoderBlock',
 ]
