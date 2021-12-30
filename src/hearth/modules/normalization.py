@@ -84,7 +84,7 @@ class MaskedLayerNorm(nn.LayerNorm):
     def __init__(self, features: int, eps: float = 1e-5, elementwise_affine: bool = True):
         super().__init__(features, eps=eps, elementwise_affine=elementwise_affine)
 
-    def forward(self, x: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:  # type: ignore
         """preform layer norm on valid timesteps in x as specifed by mask.
 
         Args:
