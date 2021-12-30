@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from hearth.modules import BaseModule
+from hearth.modules.base import BaseModule
 
 
 class Residual(BaseModule):
