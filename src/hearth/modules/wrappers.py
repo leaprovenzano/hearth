@@ -75,3 +75,53 @@ class ReZero(Residual):
         y = self.block(x)
         y = y * self.res_weight
         return x + self.dropout(y)
+
+
+class TimeMasked(BaseModule):
+    """Call the wrapped layer such that only valid timesteps are passed to the underlying layer.
+
+    Inputs are expected to be of shape (B, T, ...) and mask is expected to be a boolean mask of
+    of shape (B, T) where **valid** timesteps are True and invalid (padding) timesteps are false
+    underlying layer is expected to accept a single input of the masked shape.
+
+    Example:
+        >>> from torch import nn
+        >>> from hearth.modules import TimeMasked
+        >>>
+        >>> layer = TimeMasked(nn.Sequential(nn.Linear(8, 12), nn.LayerNorm(12)))
+        >>> mask = torch.tensor([[ True,  True,  True, False, False],
+        ...                      [ True,  True,  True,  True,  True]])
+        >>> inp = torch.rand(2, 5, 8)
+        >>> out = layer(inp, mask)
+        >>> out.shape
+        torch.Size([2, 5, 12])
+
+        >>> (out == 0.0).all(-1)
+        tensor([[False, False, False,  True,  True],
+               [False, False, False, False, False]])
+
+    """
+
+    def __init__(self, layer: nn.Module):
+        super().__init__()
+        self.layer = layer
+
+    def blocks(self):
+        if hasattr(self.layer, 'blocks'):
+            yield from self.layer.blocks()
+        yield self.layer
+
+    def forward(self, x: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+        """call the underlying layer using only timesteps from `mask` padding \
+        invalid timesteps with 0.
+
+        Args:
+            x: a tensor of shape (B, T, ...)
+            mask: boolean mask of of shape (B, T) where **valid** timesteps are True and
+                invalid (padding) timesteps are false.
+        """
+        batch, timesteps = mask.shape
+        masked_out = self.layer(x[mask])
+        out = masked_out.new_zeros(batch, timesteps, *masked_out.shape[1:])
+        out[mask] += masked_out
+        return out
