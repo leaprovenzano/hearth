@@ -1,6 +1,9 @@
 from typing import Optional, Union, Dict, Mapping, Callable
 import torch
-from torch import nn
+from torch import nn, Tensor
+from torch.nn.modules.loss import _Loss
+
+
 from hearth.containers import TensorDict, NumberDict
 from hearth._multihead import _MultiHeadFunc
 
@@ -359,3 +362,34 @@ class BinaryFocalLoss(_MaskedLoss):
     def extra_repr(self) -> str:
         parent_args = super().extra_repr()
         return f'alpha={self.alpha!r}, gamma={self.gamma}, {parent_args}'
+
+
+class MaskedMSELoss(_Loss):
+    """MSELoss with support for masked targets.
+
+    Args:
+        mask_target_value: ignore targets with this value. Defaults to -inf.
+        reduction: Defaults to 'mean'.
+
+    Example:
+        >>> import torch
+        >>> _ = torch.manual_seed(0)
+        >>> from hearth.losses import MaskedMSELoss
+        >>>
+        >>> ninf = -float('inf')
+        >>> loss = MaskedMSELoss()
+        >>> inputs = torch.rand(3, 5) # (batch, timesteps)
+        >>> targets = torch.tensor([[ 1.1721,  0.3909, -5.2731,    ninf,   ninf],
+        ...                         [ 2.4388,  2.5159, -1.0815, -1.9472, -0.5450],
+        ...                         [ 4.0665, -2.5141,    ninf,    ninf,   ninf]])
+        >>> loss(inputs, targets)
+        tensor(7.0101)
+    """
+
+    def __init__(self, mask_target_value=-float('inf'), reduction: str = 'mean'):
+        super().__init__(reduction=reduction)
+        self.mask_target_value = mask_target_value
+
+    def forward(self, input: Tensor, target: Tensor) -> Tensor:
+        mask = target != self.mask_target_value
+        return nn.functional.mse_loss(input[mask], target[mask], reduction=self.reduction)
