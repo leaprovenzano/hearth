@@ -54,6 +54,9 @@ class Loop:
     def optimizer(self, optimizer):
         if isinstance(optimizer, LazyOptimizer) and not optimizer.initialized:
             optimizer.add_model(self.model)
+            # add parameters from loss function if any exist...
+            # this will be a Running object so we need to access inner function...
+            optimizer.add_model(self.loss_fn.fn)
         self._optimizer = optimizer
 
     def to(self, device: Union[torch.device, str]):
