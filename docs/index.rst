@@ -40,6 +40,14 @@
    utils
    datasets
 
+.. currentmodule:: hearth.text
+
+.. autosummary::
+   :caption: text:
+   :toctree: _autosummary_text
+
+   utils
+
 
 .. toctree::
    :maxdepth: 2
