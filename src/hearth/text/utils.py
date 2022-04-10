@@ -17,3 +17,15 @@ def pad_tokens(tokens: List[List[int]], pad_value: int = 0) -> List[List[int]]:
     """
     maxlen = max(map(len, tokens))
     return [seq + [pad_value] * (maxlen - len(seq)) for seq in tokens]
+
+
+def norm_whitespace(s: str) -> str:
+    """normalize whitespace in the given string.
+
+    Example:
+        >>> from hearth.text.utils import norm_whitespace
+        >>>
+        >>> norm_whitespace('\tthere\t\tshould     only be  one   space  between  \twords.   ')
+        'there should only be one space between words.'
+    """
+    return ' '.join(s.split())
