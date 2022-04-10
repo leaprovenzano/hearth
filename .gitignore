@@ -123,4 +123,5 @@ env/
 docs/_autosummary/*
 docs/_autosummary_vision/*
 docs/_autosummary_data/*
+docs/_autosummary_text/*
 
