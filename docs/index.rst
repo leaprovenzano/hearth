@@ -46,6 +46,7 @@
    :caption: text:
    :toctree: _autosummary_text
 
+   tokenizers
    utils
 
 
