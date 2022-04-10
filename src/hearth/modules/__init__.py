@@ -4,6 +4,7 @@ from .wrappers import Residual, ReZero, TimeMasked
 from .normalization import LayerNormSimple, MaskedLayerNorm
 from .embeddings import AbsolutePositionalEmbedding, TransformerEmbedding
 from .transformer import Boom, TransformerEncoder, TransformerEncoderBlock
+from .pooling import AttentionPool1D
 
 __all__ = [
     'BaseModule',
@@ -18,4 +19,5 @@ __all__ = [
     'TransformerEncoder',
     'TransformerEncoderBlock',
     'TransformerEmbedding',
+    'AttentionPool1D',
 ]
