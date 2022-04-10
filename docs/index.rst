@@ -21,7 +21,7 @@
 .. currentmodule:: hearth.data
 
 .. autosummary::
-   :caption: vision:
+   :caption: data:
    :toctree: _autosummary_data
 
    samplers
