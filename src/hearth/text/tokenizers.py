@@ -116,11 +116,11 @@ class WordPieceTokenizer(Tokenizer):
         if _prefix + s in self.vocab:
             return [_prefix + s]
 
-        for i in range(len(s) - 1, 1, -1):
-            subw = _prefix + s[:i]
+        for i in range(len(s) - 1, 0, -1):
+            subw = f'{_prefix}{s[:i]}'
             if subw in self.vocab:
                 return [subw] + self.subwords(s[i:], _prefix=self.subword_prefix)
-        return [_prefix + self.oov]
+        return [f'{_prefix}{self.oov}']
 
     def split(self, s: str):
         for w in s.split():
