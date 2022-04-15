@@ -3,7 +3,7 @@ from .base import BaseModule
 from .wrappers import Residual, ReZero, TimeMasked
 from .normalization import LayerNormSimple, MaskedLayerNorm
 from .embeddings import AbsolutePositionalEmbedding, TransformerEmbedding
-from .transformer import Boom, TransformerEncoder, TransformerEncoderBlock
+from .transformer import Boom, TransformerEncoder, TransformerEncoderBlock, Bertish
 from .pooling import AttentionPool1D
 
 __all__ = [
