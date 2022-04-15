@@ -130,8 +130,4 @@ class WordPieceTokenizer(Tokenizer):
                 yield from self.subwords(w)
 
     def tokenize(self, s):
-        return (
-            [self.start_token_id]
-            + list(map(self.vocab.__getitem__, self.split(s)))
-            + [self.sep_token_id]
-        )
+        return [self.bos_idx] + list(map(self.vocab.__getitem__, self.split(s))) + [self.eos_idx]
