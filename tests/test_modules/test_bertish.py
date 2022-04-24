@@ -102,3 +102,8 @@ def test_load_transformers_bert_state_dict():
         model.load_transformers_bert_state_dict(state_dict)
     except RuntimeError as err:
         pytest.fail(f'failed to load bert state dict from transformers style model! raised {err}')
+
+
+@pytest.mark.parametrize('model, expected_length', [(Bertish(layers=4), 5), (Bertish(layers=6), 7)])
+def test_depth(model, expected_length):
+    assert model.depth() == expected_length
