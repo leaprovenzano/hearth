@@ -15,7 +15,7 @@ class Metric(ABC):
         with torch losses and modules)
     """
 
-    def forward(self, inputs, target, **kwargs):
+    def forward(self, inputs: Tensor, targets: Tensor, **kwargs) -> Tensor:
         """given call this metric given an input and target and optional keyword arguments.
 
         Args:
@@ -27,18 +27,20 @@ class Metric(ABC):
         """
         return NotImplemented
 
-    def _mask(self, inputs, targets) -> Tuple[Tensor, Tensor]:
+    def _mask(self, inputs: Tensor, targets: Tensor) -> Tuple[Tensor, Tensor]:
         return inputs, targets
 
-    def _prepare(self, inputs, targets) -> Tuple[Tensor, Tensor]:
+    def _prepare(self, inputs: Tensor, targets: Tensor) -> Tuple[Tensor, Tensor]:
         return inputs, targets
 
-    def _aggregate(self, result):
+    def _aggregate(self, result: Tensor):
         return result
 
-    def __call__(self, inp: Tensor, target: Tensor, **kwargs) -> Tensor:
+    def __call__(self, inp: Tensor, targets: Tensor, **kwargs) -> Tensor:
         with torch.no_grad():
-            return self._aggregate(self.forward(*self._prepare(*self._mask(inp, target)), **kwargs))
+            return self._aggregate(
+                self.forward(*self._prepare(*self._mask(inp, targets)), **kwargs)
+            )
 
 
 class MetricStack(Metric):

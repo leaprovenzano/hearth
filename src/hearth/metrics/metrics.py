@@ -1,4 +1,15 @@
+import sys
 from dataclasses import dataclass
+
+if sys.version_info < (3, 8):
+    from typing_extensions import Literal
+else:
+    from typing import Literal
+
+from torch import Tensor
+from typing import Optional, Tuple
+from hearth.metrics.base import Metric
+from hearth.metrics.functional import pearson_corr
 from hearth.metrics.mixins import (
     HardBinaryMixin,
     MaskingMixin,
@@ -562,3 +573,60 @@ class CategoricalF1(MaskingMixin, OneHotMixin, F1Mixin, AverageMixin):
     """
 
     pass
+
+
+@dataclass
+class PearsonCorrCoef(Metric):
+    """pearson correlation coefficient with optional input transform.
+
+    Args:
+        transform_inputs: one of ['sigmoid', 'tanh', None]. If populated apply this transform
+            to inputs before computing metric. Defaults to None ( No Transform).
+
+    Example:
+        >>> import torch
+        >>> _ = torch.manual_seed(0)
+        >>> from hearth.metrics import PearsonCorrCoef
+        >>>
+        >>>
+        >>> metric = PearsonCorrCoef()
+
+        by default ``transform_inputs=None``.
+
+        >>> targets = torch.normal(0, 1, size=(10, 1)) # (batch, 1)
+        >>> predictions = torch.normal(0, 1, size=(10, 1)) # (batch, 1)
+        >>> metric(predictions, targets)
+        tensor(0.3518)
+
+        also works if extra dim is removed:
+
+        >>> metric(predictions.squeeze(), targets.squeeze())
+        tensor(0.3518)
+
+        we can specify sigmoid transform...
+
+        >>> metric = PearsonCorrCoef(transform_inputs='sigmoid')
+        >>> metric(torch.normal(0, 1, size=(5,)), torch.tensor([1.0, 1.0, 0.0, 1.0, 0.0]))
+        tensor(0.3267)
+
+        or tanh transform....
+
+        >>> metric = PearsonCorrCoef(transform_inputs='sigmoid')
+        >>> metric(torch.normal(0, 1, size=(5,)), torch.tensor([1.0, -1.0, 1.0, -1.0, 1.0]))
+        tensor(0.2911)
+
+    """
+
+    transform_inputs: Optional[Literal['sigmoid', 'tanh']] = None
+
+    def _prepare(self, inputs: Tensor, targets: Tensor) -> Tuple[Tensor, Tensor]:
+        targets = targets.squeeze(-1)
+        inputs = inputs.reshape_as(targets)
+        if self.transform_inputs == 'sigmoid':
+            inputs = inputs.sigmoid()
+        elif self.transform_inputs == 'tanh':
+            inputs = inputs.tanh()
+        return inputs, targets
+
+    def forward(self, inputs: Tensor, targets: Tensor, **kwargs) -> Tensor:  # type : ignore
+        return pearson_corr(inputs, targets)
