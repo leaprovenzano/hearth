@@ -20,4 +20,5 @@ __all__ = [
     'TransformerEncoderBlock',
     'TransformerEmbedding',
     'AttentionPool1D',
+    'Bertish',
 ]
