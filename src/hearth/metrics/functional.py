@@ -42,3 +42,7 @@ def fbeta(inputs: Tensor, targets: Tensor, beta: float, dim=0, eps=1e-8):
 
 def f1(inputs: Tensor, targets: Tensor, dim=0, eps=1e-8):
     return fbeta(inputs, targets, beta=1.0, dim=dim, eps=eps)
+
+
+def pearson_corr(inp: Tensor, target: Tensor) -> Tensor:
+    return torch.corrcoef(torch.stack([inp, target])).amin()
