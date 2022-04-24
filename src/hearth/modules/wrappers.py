@@ -122,6 +122,12 @@ class TimeMasked(BaseModule):
         """
         batch, timesteps = mask.shape
         masked_out = self.layer(x[mask])
-        out = masked_out.new_zeros(batch, timesteps, *masked_out.shape[1:])
+        out = masked_out.new_zeros(
+            (
+                batch,
+                timesteps,
+            )
+            + masked_out.shape[1:]
+        )
         out[mask] += masked_out
         return out
